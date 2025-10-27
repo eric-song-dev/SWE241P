@@ -32,7 +32,7 @@ std::string SortUtils::quickSortString(const std::string& str) {
     return std::string(chars.begin(), chars.end());
 }
 
-// Time: O(N log N), where N is the length of the string
+// Time: O(log N), where N is the length of the string
 // Space: O(1)
 void SortUtils::heapify(std::vector<char>& chars, int len, int i) {
     int largest = i;
