@@ -26,8 +26,9 @@
 | 6    | `i ← i + 1`                              | n - 1       |
 | 7    | `return currentMin`                      | 1           |
 
-> Q: Why does the while condition (`while i <= n-1 do`) execute $n$ times, while the loop body only executes $n-1$ times?
-> A: The while loop's condition is always checked one final time to determine that it is `false` and the loop must stop
+Q: Why does the while condition (`while i <= n-1 do`) execute $n$ times, while the loop body only executes $n-1$ times?
+
+A: The while loop's condition is always checked one final time to determine that it is `false` and the loop must stop
 
 ### Best Case
 
