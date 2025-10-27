@@ -142,7 +142,7 @@ int Graph::countIslands() {
     int islandCount = 0;
     long long dummyPopulation = 0; // Not used for counting
 
-    for (auto const& [name, cityPtr] : cities) {
+    for (const auto& [name, cityPtr] : cities) {
         if (!visited.count(name)) {
             islandCount++;
             dfs(cityPtr, visited, dummyPopulation); // Traverse the component
