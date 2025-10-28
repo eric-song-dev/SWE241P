@@ -7,62 +7,63 @@
  ************************************************************************/
 
 #include "../include/PermutationCheck.h"
+#include <unordered_map>
+#include <string>
 
 PermutationCheck::PermutationCheck() {}
 
 PermutationCheck::~PermutationCheck() {}
 
-// Time: O(N + M), where N is the length of s1, M is the length of s2
-// Space: O(K), where K is the number of unique characters in s1, which is need.size()
+// Time: O(N! * M * N), where N = s1.size(), M = s2.size(), O(N!) is for backtracking operation, O((M-N)*N) or O(M*N) is for s2.find operation
+// Space: O(N), for map and recursion stack
+bool PermutationCheck::backtrack(std::unordered_map<char, int>& need, std::string& currentPermutation, const int targetSize, const std::string& s2) {
+    // base case, when the permutation is the same size as s1 and this permutation is a substring of s2
+    if (currentPermutation.size() == targetSize && s2.find(currentPermutation) != std::string::npos) {
+        return true;
+    }
+
+    for (const auto& pair : need) {
+        const char ch = pair.first;
+        const int count = pair.second;
+
+        if (count > 0) {
+            // make choice
+            // 1. add char to the current permutation
+            // 2. decrease the count
+            currentPermutation.push_back(ch);
+            need[ch]--;
+
+            // if any branch finds a solution, return true immediately
+            // early termination, is also like a pruning
+            if (backtrack(need, currentPermutation, targetSize, s2)) {
+                return true;
+            }
+
+            // Undo choice (backtrack)
+            // 1. restore the count
+            // 2. remove char to the current permutation
+            need[ch]++;
+            currentPermutation.pop_back();
+        }
+    }
+
+    // If all character choices fail to find a match from this state
+    return false;
+}
+
+// Time: O(N! * M * N), where N = s1.size(), M = s2.size(), O(N!) is for backtracking operation, O((M-N)*N) or O(M*N) is for s2.find operation
+// Space: O(N), for map and recursion stack
 bool PermutationCheck::checkInclusion(const std::string& s1, const std::string& s2) {
     // edge cases
-    if (s1.empty()) return true; // empty string is always a permutation/substring
+    if (s1.empty()) return true;
     if (s2.empty() || s1.size() > s2.size()) return false;
 
-    // character counts needed for s1's permutation
     std::unordered_map<char, int> need;
     for (const char ch : s1) {
         need[ch]++;
     }
 
-    // sliding window character counts
-    std::unordered_map<char, int> window;
-    // [left, right)
-    int left = 0, right = 0;
-    int chMatchCount = 0; // count of characters whose counts match need
-
-    while (right < s2.size()) {
-        // extend window
-        char rCh = s2[right];
-        right++;
-
-        // update window and chMatchCount if rCh is needed
-        if (need.count(rCh)) {
-            window[rCh]++;
-            if (window[rCh] == need[rCh]) {
-                chMatchCount++;
-            }
-        }
-
-        // Only require window.size() equals s1.size()
-        if (right - left >= s1.size()) {
-            if (chMatchCount == need.size()) {
-                return true;
-            }
-
-            // shrink window
-            char lCh = s2[left];
-            left++;
-
-            // update window and chMatchCount if lCh is needed
-            if (need.count(lCh)) {
-                if (window[lCh] == need[lCh]) {
-                    chMatchCount--;
-                }
-                window[lCh]--;
-            }
-        }
-    }
-
-    return false;
+    std::string currentPermutation = "";
+    
+    return backtrack(need, currentPermutation, static_cast<int>(s1.size()), s2);
 }

@@ -19,4 +19,8 @@ public:
 
     // Task 1: Check if s2 contains a permutation of s1
     bool checkInclusion(const std::string& s1, const std::string& s2);
+    
+private:
+    //  Helper function to find permutations and check for inclusion recursively
+    bool backtrack(std::unordered_map<char, int>& s1Map, std::string& currentPermutation, const int targetSize, const std::string& s2);
 };
